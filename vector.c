@@ -46,11 +46,14 @@ int vec_remove(vector *v, void *i) {
     return 1;
   }
   for (size_t j = 0; j < v->count; j++) {
-    if (&v->data[j] == i) {
+    void *elem = (char *)v->data + j * v->type_size;
+
+    if (memcmp(elem, i, v->type_size) == 0) {
       for (size_t k = j + 1; k < v->count; k++) {
-        memcpy((char *)v->data + v->type_size * (k - 1),
-               (char *)v->data + v->type_size * k, v->type_size);
+        memcpy((char *)v->data + (k - 1) * v->type_size,
+               (char *)v->data + k * v->type_size, v->type_size);
       }
+      v->count--;
       return 0;
     }
   }
@@ -84,19 +87,20 @@ size_t vec_index_of(vector *v, void *i) {
     return SIZE_MAX;
   }
   for (int j = 0; j < v->count; j++) {
-    if (&v->data[j] == i) {
+    void *elem = (char *)v->data + j * v->type_size;
+    if (memcmp(elem, i, v->type_size) == 0) {
       return j;
     }
   }
   return SIZE_MAX;
 }
 
-int free_vector(vector **v){
-    if(*v==NULL){
-        return 1;
-    }
-    free((*v)->data);
-    free(*v);
-    *v=NULL;
-    return 0;
+int free_vector(vector **v) {
+  if (*v == NULL) {
+    return 1;
+  }
+  free((*v)->data);
+  free(*v);
+  *v = NULL;
+  return 0;
 }

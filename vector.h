@@ -1,13 +1,9 @@
-#include <stddef.h>
 #ifndef VECTOR_H
 #define VECTOR_H
 
-typedef struct vector {
-  void *data;
-  size_t type_size;
-  size_t count;
-  size_t capacity;
-} vector;
+#include <stddef.h>
+
+typedef struct vector vector;
 
 /// Initializes vector, Index starts from 0, capacity is set internally
 /// @param ts Size of the type for the vector such as int float char
@@ -52,5 +48,6 @@ size_t vec_index_of(vector *v, void *i);
 /// After calling this, the vector pointer is set to NULL.
 /// @return 0 on SUCCESS, 1 on FAILURE
 int free_vector(vector **v);
+size_t vec_count(vector *v);
 
 #endif

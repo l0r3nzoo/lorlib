@@ -31,7 +31,7 @@ vector *create_vector(size_t ts) {
 }
 
 int vec_push(vector *v, void *i) {
-  if (v == NULL) {
+  if (v == NULL||i==NULL) {
     return 1;
   }
   if (v->count == v->capacity) {
@@ -49,7 +49,7 @@ int vec_push(vector *v, void *i) {
 }
 
 int vec_remove(vector *v, void *i) {
-  if (v == NULL || v->count == 0) {
+  if (v == NULL || v->count == 0||i==NULL) {
     return 1;
   }
   for (size_t j = 0; j < v->count; j++) {
@@ -94,7 +94,7 @@ int vec_clear(vector *v) {
 }
 
 size_t vec_index_of(vector *v, void *i) {
-  if (v == NULL || v->count == 0) {
+  if (v == NULL || v->count == 0||i==NULL) {
     return SIZE_MAX;
   }
   for (int j = 0; j < v->count; j++) {
@@ -109,7 +109,7 @@ size_t vec_index_of(vector *v, void *i) {
 size_t vec_count(vector *v) { return v->count; }
 
 int free_vector(vector **v) {
-  if (*v == NULL) {
+  if (v==NULL||*v == NULL) {
     return 1;
   }
   free((*v)->data);

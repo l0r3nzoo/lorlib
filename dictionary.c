@@ -149,8 +149,9 @@ int dict_remove(dictionary *dict, void *key) {
         memcmp(dict->pairs[i].key, key, dict->key_s) == 0) {
       free(dict->pairs[i].key);
       free(dict->pairs[i].value);
-      for (int j = i + 1; j < dict->count; j++) {
-        dict->pairs[j - 1] = dict->pairs[j];
+      if (i + 1 < dict->count) {
+        memmove(&dict->pairs[i], &dict->pairs[i + 1],
+                (dict->count - i - 1) * sizeof(dict->pairs[0]));
       }
       dict->count--;
       return 0;

@@ -52,9 +52,9 @@ int queue_dequeue(queue *q, void *o) {
   }
   // copy the 0th element in the queue to the out
   memcpy(o, (char *)q->data, q->type_size);
-  for (int i = 1; i < q->count; i++) {
-    memcpy((char *)q->data + q->type_size * (i - 1),
-           (char *)q->data + q->type_size * i, q->type_size);
+  if (q->count > 1) {
+    memmove(q->data, (char *)q->data + q->type_size,
+            (q->count - 1) * q->type_size);
   }
   q->count--;
   return 0;

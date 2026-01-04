@@ -234,3 +234,5 @@ int free_dictionary(dictionary **d) {
   *d = NULL;
   return 0;
 }
+
+size_t dict_count(dictionary *dict) { return dict->count; }

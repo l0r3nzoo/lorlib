@@ -16,6 +16,7 @@ int dict_remove(dictionary *dict, void *key);
 bool dict_contains_key(dictionary *dict, void *key);
 bool dict_contains_value(dictionary *dict, void *value);
 int dict_clear(dictionary *dict);
+size_t dict_count(dictionary *dict);
 int free_dictionary(dictionary **dict);
 
 #endif

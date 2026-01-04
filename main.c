@@ -104,6 +104,7 @@ int main(void) {
   assert(dict_remove(dict, &fake_key) == 1);
 
   assert(dict_clear(dict) == 0);
+  assert(dict_count(dict) == 0);
   assert(dict_contains_key(dict, &key2) == false);
   assert(dict_contains_key(dict, &key3) == false);
 

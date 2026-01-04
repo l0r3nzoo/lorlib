@@ -80,7 +80,7 @@ int stack_clear(stack *s) {
 size_t stack_count(stack *s) { return s->count; }
 
 int free_stack(stack **s) {
-  if (s==NULL||*s == NULL) {
+  if (s == NULL || *s == NULL) {
     return 1;
   }
   free((*s)->data);

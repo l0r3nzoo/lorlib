@@ -1,4 +1,5 @@
 #include "dictionary.h"
+#include "queue.h"
 #include "stack.h"
 #include "vector.h"
 #include <assert.h>
@@ -110,5 +111,43 @@ int main(void) {
   assert(dict == NULL);
 
   printf("All dictionary tests passed\n");
+
+
+  queue *q = create_queue(sizeof(int));
+  assert(q);
+
+  int x = 100, y = 200, z = 300, qout;
+
+  assert(queue_enqueue(q, &x) == 0);
+  assert(queue_enqueue(q, &y) == 0);
+  assert(queue_enqueue(q, &z) == 0);
+  assert(queue_count(q) == 3);
+
+  assert(queue_dequeue(q, &qout) == 0);
+  assert(qout == 100);
+  assert(queue_count(q) == 2);
+
+  assert(queue_dequeue(q, &qout) == 0);
+  assert(qout == 200);
+  assert(queue_count(q) == 1);
+
+  int *qpeek = queue_peek(q);
+  assert(qpeek && *qpeek == 300);
+
+  assert(queue_dequeue(q, &qout) == 0);
+  assert(qout == 300);
+  assert(queue_count(q) == 0);
+
+  assert(queue_dequeue(q, &qout) == 1);
+
+  assert(queue_enqueue(q, &x) == 0);
+  assert(queue_enqueue(q, &y) == 0);
+  assert(queue_clear(q) == 0);
+  assert(queue_count(q) == 0);
+
+  assert(free_queue(&q) == 0);
+  assert(q == NULL);
+
+  printf("All queue tests passed\n");
   return 0;
 }

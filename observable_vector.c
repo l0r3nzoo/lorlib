@@ -48,7 +48,7 @@ int o_vec_push(observable_vector *v, void *i) {
   memcpy((char *)v->data + v->type_size * v->count, i, v->type_size);
   v->count++;
   if (on_changed_callback) {
-      vector_changed(ITEM_ADDED);
+      on_changed_callback(ITEM_ADDED);
   }
   return 0;
 }
@@ -68,7 +68,7 @@ int o_vec_remove(observable_vector *v, void *i) {
       }
       v->count--;
       if (on_changed_callback) {
-          vector_changed(ITEM_REMOVED);
+          on_changed_callback(ITEM_REMOVED);
       }
       return 0;
     }
@@ -87,7 +87,7 @@ int o_vec_remove_at(observable_vector *v, size_t i) {
   }
   v->count--;
   if (on_changed_callback) {
-      vector_changed(ITEM_REMOVED);
+      on_changed_callback(ITEM_REMOVED);
   }
   return 0;
 }
@@ -104,7 +104,7 @@ int o_vec_clear(observable_vector *v) {
   v->capacity = INITIAL_CAP;
   v->count = 0;
   if (on_changed_callback) {
-      vector_changed(VECTOR_CLEARED);
+      on_changed_callback(VECTOR_CLEARED);
   }
   return 0;
 }
@@ -132,7 +132,7 @@ int free_observable_vector(observable_vector **v) {
   free(*v);
   *v = NULL;
   if (on_changed_callback) {
-      vector_changed(VECTOR_FREED);
+      on_changed_callback(VECTOR_FREED);
   }
   return 0;
 }

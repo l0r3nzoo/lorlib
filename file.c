@@ -6,6 +6,7 @@
 #ifdef _WIN32
 #include <direct.h>
 #endif
+#include <sys/stat.h>
 
 int file_create(const char *file_name) {
   FILE *file = fopen(file_name, "w");
@@ -129,7 +130,7 @@ char *file_read_text(const char *file_name) {
 
 void dir_create(const char *name) {
 #ifdef __linux__
-  mkdir(path, 0777);
+  mkdir(name, 0755);
 #else
   _mkdir(name);
 #endif

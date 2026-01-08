@@ -127,11 +127,3 @@ char *file_read_text(const char *file_name) {
   buffer[file_size] = '\0';
   return buffer;
 }
-
-void dir_create(const char *name) {
-#ifdef __linux__
-  mkdir(name, 0755);
-#else
-  _mkdir(name);
-#endif
-}

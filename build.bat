@@ -5,7 +5,7 @@ cl /TC /Zi /Od ^
   /Fo:build\ ^
   /Fd:build\build.pdb ^
   /Fe:build\main.exe ^
-  main.c stack.c vector.c dictionary.c queue.c observable_vector.c file.c
+  main.c stack.c vector.c dictionary.c queue.c observable_vector.c file.c directory.c
 
 if errorlevel 1 exit /b 1
 

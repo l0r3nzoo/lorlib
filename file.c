@@ -3,6 +3,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#ifdef _WIN32
+#include <direct.h>
+#endif
 
 int file_create(const char *file_name) {
   FILE *file = fopen(file_name, "w");
@@ -122,4 +125,12 @@ char *file_read_text(const char *file_name) {
 
   buffer[file_size] = '\0';
   return buffer;
+}
+
+void dir_create(const char *name) {
+#ifdef __linux__
+  mkdir(path, 0777);
+#else
+  _mkdir(name);
+#endif
 }

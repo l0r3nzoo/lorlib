@@ -88,3 +88,15 @@ void dir_list_files(char *directory_path,
 }
 
 void dir_remove(const char *name) { int result = rmdir(name); }
+
+#ifdef _WIN32
+void dir_rename(const unsigned short* source,const unsigned short* destination){
+
+    MoveFileW(source,destination);
+}
+#else
+void dir_rename(const char* source,const char* destination){
+
+    rename(source,destination);
+}
+#endif

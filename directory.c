@@ -87,7 +87,7 @@ void dir_list_files(char *directory_path, void (*file_handle)(char *file_path)) 
     #endif
 }
 
-void dir_remove(const char *name) { int result = rmdir(name); }
+void dir_remove(const char *name) {  rmdir(name); }
 
 #ifdef _WIN32
 void dir_rename(const unsigned short* source,const unsigned short* destination){

@@ -17,15 +17,15 @@
 #define PATH_SEPARATOR "/"
 #endif
 
-void dir_create(const char *name) {
+int dir_create(const char *name) {
     #ifdef _WIN32
-    _mkdir(name);
+    return _mkdir(name);
     #else
-    mkdir(name, 0755);
+    return mkdir(name, 0755);
     #endif
 }
 
-void dir_create_recursive(char *name) {
+int dir_create_recursive(char *name) {
     char buffer[1024] = "";
     char *path = strtok(name, "/\\");
 
@@ -34,9 +34,12 @@ void dir_create_recursive(char *name) {
             strcat(buffer, PATH_SEPARATOR);
         }
         strcat(buffer, path);
-        dir_create(buffer);
+        if(dir_create(buffer)!=0){
+            return 1;
+        }
         path = strtok(NULL, "/\\");
     }
+    return 0;
 }
 
 void dir_list_files(char *directory_path, void (*file_handle)(char *file_path)) {
@@ -87,17 +90,17 @@ void dir_list_files(char *directory_path, void (*file_handle)(char *file_path)) 
     #endif
 }
 
-void dir_remove(const char *name) {  rmdir(name); }
+int dir_remove(const char *name) {  return rmdir(name); }
 
 #ifdef _WIN32
-void dir_rename(const unsigned short* source,const unsigned short* destination){
+int dir_rename(const unsigned short* source,const unsigned short* destination){
 
-    MoveFileW(source,destination);
+    return MoveFileW(source,destination);
 }
 #else
-void dir_rename(const char* source,const char* destination){
+int dir_rename(const char* source,const char* destination){
 
-    rename(source,destination);
+    return rename(source,destination);
 }
 #endif
 

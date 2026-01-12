@@ -44,5 +44,6 @@ void dir_list_files(char* directory_path,void (*file_handle)(char* file_path)){
 		}
 
 	}
+	closedir(direct);
 
 }

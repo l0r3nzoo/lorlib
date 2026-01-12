@@ -1,3 +1,4 @@
+#include <stdbool.h>
 #ifndef DIRECTORY_H
 #define DIRECTORY_H
 
@@ -8,6 +9,8 @@ void dir_remove(const char* name);
 #ifdef _WIN32
 void dir_rename(const unsigned short* source,const unsigned short* destination);
 #else
-#endif
 void dir_rename(const char* source,const char* destination);
+#endif
+
+int dir_exists(const char* name);
 #endif

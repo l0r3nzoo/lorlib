@@ -109,10 +109,34 @@ int string_prepend_char(string *self, char c) {
     self->data = temp_data;
     self->capacity = temp_cap;
   }
-  self->size++;
-  for (size_t i = 0; i < self->size; i++) {
-
+  for (size_t i = self->size; i > 0; i--) {
+    self->data[i] = self->data[i - 1];
   }
+  self->data[0] = c;
+  self->size++;
+  self->data[self->size] = '\0';
+  return 0;
+}
+
+int string_prepend_str(string *self, const char *s) {
+  if (self == NULL) {
+    return 1;
+  }
+  size_t len = strlen(s);
+  if (self->size + 1 >= self->capacity) {
+    size_t temp_cap = self->size + len + INITIAL_CAP;
+    char *temp_data = realloc(self->data, sizeof(char) * temp_cap);
+    if (temp_data == NULL) {
+      return 1;
+    }
+    self->data = temp_data;
+    self->capacity = temp_cap;
+  }
+  for (size_t i = self->size; i > 0; i--) {
+    self->data[i + len - 1] = self->data[i - 1];
+  }
+  memcpy(self->data, s, len);
+  self->size += len;
   self->data[self->size] = '\0';
   return 0;
 }

@@ -14,8 +14,8 @@ string *string_concat(vector *string);
 const char *string_cstr(string *self); //DONE
 
 int clear_string(string *self); //DONE
-int string_prepend_char(string *self, char c);
-int string_prepend_str(string *self, const char *s);
+int string_prepend_char(string *self, char c); //DONE
+int string_prepend_str(string *self, const char *s); //DONE
 int string_append_char(string *self, char c); //DONE
 int string_append_str(string *self, const char *s); //DONE
 int string_remove_range(string *self, size_t start, size_t count);

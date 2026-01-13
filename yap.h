@@ -15,15 +15,15 @@ void yap_base(const char *tag, const char *msg) {
 #endif
 
 // information
-void yap_info(const char *msg) {
+static inline void yap_info(const char *msg) {
 #ifdef IS_COLOR
-  yap_base(34, 40, "INFO", msg);
+  yap_base(37, 40, "INFO", msg);
 #else
   yap_base("INFO", msg);
 #endif
 }
 // warning
-void yap_warn(const char *msg) {
+static inline void yap_warn(const char *msg) {
 #ifdef IS_COLOR
   yap_base(33, 40, "WARN", msg);
 #else
@@ -31,7 +31,7 @@ void yap_warn(const char *msg) {
 #endif
 }
 // fatal
-void yap_fat(const char *msg) {
+static inline void yap_fat(const char *msg) {
 #ifdef IS_COLOR
   yap_base(91, 40, "FATAL", msg);
 #else
@@ -39,7 +39,7 @@ void yap_fat(const char *msg) {
 #endif
 }
 // critical
-void yap_clit(const char *msg) {
+static inline void yap_clit(const char *msg) {
 #ifdef IS_COLOR
   yap_base(31, 40, "CRITICAL", msg);
 #else
@@ -48,7 +48,7 @@ void yap_clit(const char *msg) {
 }
 
 // success
-void yap_suck(const char *msg) {
+static inline void yap_suck(const char *msg) {
 #ifdef IS_COLOR
   yap_base(32, 40, "SUCCESS", msg);
 #else

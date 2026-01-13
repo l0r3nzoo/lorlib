@@ -4,12 +4,12 @@
 #include <stdio.h>
 
 #ifdef IS_COLOR
-void yap_base(int fg, int bg, const char *tag, const char *msg) {
+static inline void yap_base(int fg, int bg, const char *tag, const char *msg) {
   printf("\033[%d;%dm%s - %s\033[0m\n", fg, bg, tag, msg);
 }
 #else
 
-void yap_base(const char *tag, const char *msg) {
+static inline void yap_base(const char *tag, const char *msg) {
   printf("%s - %s\n", tag, msg);
 }
 #endif

@@ -64,11 +64,9 @@
 
 int main(){
     string *string = create_string();
-    string_append_str(string, "hello guys");
-    string_reverse(string);
+    string_append_str(string, "hello,guys,this,is,loren,hahahahahhahahah");
 
-    const char *stringc = string_cstr(string);
-    printf("reverse '%s'\n", stringc);
+    vector* stringvec=string_split_char(string, ',');
 
     clear_string(string);
     free_string(&string);

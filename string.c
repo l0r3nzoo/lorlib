@@ -253,7 +253,38 @@ int string_reverse(string *self) {
   return 0;
 }
 
-vector *string_split_char(string *self, char c){
-    vector* strvector=create_vector(sizeof(string));
+vector *string_split_char(string *self, char c) {
+    if (self == NULL || self->data == NULL) {
+        return NULL;
+    }
+
+    vector *strvector = create_vector(sizeof(string));
+    size_t index = 0;
+
+    for (size_t i = 0; i < self->size; i++) {
+        if (self->data[i] == c) {
+            size_t length = i - index;
+            string *splitstring = create_string();
+            if (length > 0) {
+                char splitbuffer[length + 1];
+                memcpy(splitbuffer, self->data + index, length);
+                splitbuffer[length] = '\0';
+                string_append_str(splitstring, splitbuffer);
+            }
+            vec_push(strvector, splitstring);
+            index = i + 1;
+        }
+    }
+
+    if (index < self->size) {
+        size_t length = self->size - index;
+        string *splitstring = create_string();
+        char splitbuffer[length + 1];
+        memcpy(splitbuffer, self->data + index, length);
+        splitbuffer[length] = '\0';
+        string_append_str(splitstring, splitbuffer);
+        vec_push(strvector, splitstring);
+    }
+
     return strvector;
 }

@@ -1,7 +1,5 @@
 #include "string.h"
-#include "vector.h"
 #include <stdio.h>
-#include <stdlib.h>
 
 // int main() {
 //   string *string = create_string();
@@ -75,9 +73,23 @@ int main() {
   string *item = NULL;
   for (i = 0; i < count; i++) {
     item = (string *)vec_at(stringvec, i);
-    printf("%s\n",string_cstr(item));
-    cleanup_string(item);
+    printf("%s\n", string_cstr(item));
   }
-  free_vector(&stringvec);
+
+  printf("length %zu\n", string_length(stringobj));
+  printf("index of char i %d\n", string_indexof_char(stringobj, 'i'));
+  printf("last index of char i %d\n", string_lastindexof_char(stringobj, 'i'));
+  printf("is empty %d\n", string_isempty(stringobj));
+  printf("contains e %d\n", string_contains_char(stringobj, 'e'));
+  printf("starts with h %d\n", string_startswith_char(stringobj, 'h'));
+  printf("ends with n %d\n", string_endswith_char(stringobj, 'n'));
+
+  string *joinedstring = string_join('.', stringvec);
+  printf("%s\n", string_cstr(joinedstring));
+
+  string *concatstring = string_concat(stringvec);
+  printf("%s\n", string_cstr(concatstring));
+
+  free_string_vector(&stringvec);
   free_string(&stringobj);
 }

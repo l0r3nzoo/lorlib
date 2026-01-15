@@ -5,10 +5,10 @@
 #define STRING_H
 
 typedef struct string string;
-string *create_string(void); // DONE
-string *string_join(char seperator, vector *strings);
-string *string_concat(vector *string);
-int init_string(string* str); // DONE
+string *create_string(void);                          // DONE
+string *string_join(char seperator, vector *strings); // DONE
+string *string_concat(vector *strings);               // DONE
+int init_string(string *str);                         // DONE
 
 const char *string_cstr(string *self); // DONE
 
@@ -27,25 +27,25 @@ int string_toupper(string *self);           // DONE
 int string_tolower(string *self);           // DONE
 int string_reverse(string *self);           // DONE
 
-vector *string_split_char(string *self, char c);
+vector *string_split_char(string *self, char c); // DONE
 vector *string_split_str(string *self, const char *s);
 
-size_t string_length(string *self);
-size_t string_indexof_char(string *self, char c);
-size_t string_indexof_str(string *self, const char *s);
-size_t string_lastindexof_char(string *self, char c);
-size_t string_lastindexof_str(string *self, const char *s);
+size_t string_length(string *self);            // DONE
+int string_indexof_char(string *self, char c); // DONE
+int string_indexof_str(string *self, const char *s);
+int string_lastindexof_char(string *self, char c); // DONE
+int string_lastindexof_str(string *self, const char *s);
 
-bool string_isempty(string *self);
-bool string_contains_char(string *self, char c);
+bool string_isempty(string *self);               // DONE
+bool string_contains_char(string *self, char c); // DONE
 bool string_contains_str(string *self, const char *s);
-bool string_startswith_char(string *self, char c);
+bool string_startswith_char(string *self, char c); // DONE
 bool string_startswith_str(string *self, const char *s);
-bool string_endswith_char(string *self, char c);
+bool string_endswith_char(string *self, char c); // DONE
 bool string_endswith_str(string *self, const char *s);
 
-int free_string(string **self); // DONE
-int destroy_string(string *self); // DONE
-void cleanup_string(string *self); //DONE
+int free_string(string **self);              // DONE
+int destroy_string(string *self);            // DONE
+void free_string_vector(vector **stringvec); // DONE
 
 #endif

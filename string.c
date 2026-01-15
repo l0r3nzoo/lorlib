@@ -52,7 +52,7 @@ int string_append_str(string *self, const char *s) {
     return 1;
   }
   size_t len = strlen(s);
-  if (self->size+len + 1 > self->capacity) {
+  if (self->size + len + 1 > self->capacity) {
     size_t temp_cap = self->size + len + INITIAL_CAP;
     char *temp_data = realloc(self->data, sizeof(char) * temp_cap);
     if (temp_data == NULL) {
@@ -329,4 +329,118 @@ void cleanup_string(string *self) {
     free(self->data);
     self->data = NULL;
   }
+}
+
+void free_string_vector(vector **stringvec) {
+  size_t i;
+  string *item = NULL;
+  size_t count = vec_count(*stringvec);
+  for (i = 0; i < count; i++) {
+    item = (string *)vec_at(*stringvec, i);
+    cleanup_string(item);
+  }
+  free_vector(stringvec);
+}
+
+size_t string_length(string *self) {
+  if (self == NULL) {
+    return -1;
+  }
+  return self->size;
+}
+
+int string_indexof_char(string *self, char c) {
+  if (self == NULL) {
+    return -1;
+  }
+  for (size_t i = 0; i < self->size; i++) {
+    if (self->data[i] == c) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+int string_lastindexof_char(string *self, char c) {
+  if (self == NULL) {
+    return -1;
+  }
+  for (size_t i = self->size - 1; i >= 0; i--) {
+    if (self->data[i] == c) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+bool string_isempty(string *self) {
+  if (self == NULL) {
+    return true;
+  }
+  return self->size == 0 ? true : false;
+}
+
+bool string_contains_char(string *self, char c) {
+  if (self == NULL) {
+    return false;
+  }
+  for (int i = 0; i < self->size; i++) {
+    if (self->data[i] == c) {
+      return true;
+    }
+  }
+  return false;
+}
+
+bool string_startswith_char(string *self, char c) {
+  if (self == NULL) {
+    return false;
+  }
+  if (self->data[0] == c) {
+    return true;
+  }
+  return false;
+}
+
+bool string_endswith_char(string *self, char c) {
+  if (self == NULL) {
+    return false;
+  }
+  if (self->data[self->size - 1] == c) {
+    return true;
+  }
+  return false;
+}
+
+string *string_join(char seperator, vector *strings) {
+  string *str = create_string();
+  size_t veclen = vec_count(strings);
+  if (veclen == 0) {
+    return str;
+  }
+  size_t i;
+  string *item = NULL;
+  for (i = 0; i < veclen; i++) {
+    if (i != 0) {
+      string_append_char(str, seperator);
+    }
+    item = (string *)vec_at(strings, i);
+    string_append_str(str, string_cstr(item));
+  }
+  return str;
+}
+
+string *string_concat(vector *strings) {
+  string *str = create_string();
+  size_t veclen = vec_count(strings);
+  if (veclen == 0) {
+    return str;
+  }
+  size_t i;
+  string *item = NULL;
+  for (i = 0; i < veclen; i++) {
+    item = (string *)vec_at(strings, i);
+    string_append_str(str, string_cstr(item));
+  }
+  return str;
 }

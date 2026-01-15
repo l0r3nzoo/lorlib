@@ -119,3 +119,10 @@ int free_vector(vector **v) {
   *v = NULL;
   return 0;
 }
+
+void* vec_at(vector* v,size_t i){
+    if(v==NULL || v->data==NULL){
+        return NULL;
+    }
+    return (char*)v->data+v->type_size*i;
+}

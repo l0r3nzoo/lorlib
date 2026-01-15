@@ -26,6 +26,7 @@ string *create_string(void) {
   }
   str->capacity = INITIAL_CAP;
   str->size = 0;
+  str->data[str->size] = '\0';
   return str;
 }
 int string_append_char(string *self, char c) {
@@ -51,7 +52,7 @@ int string_append_str(string *self, const char *s) {
     return 1;
   }
   size_t len = strlen(s);
-  if (self->size + 1 >= self->capacity) {
+  if (self->size+len + 1 > self->capacity) {
     size_t temp_cap = self->size + len + INITIAL_CAP;
     char *temp_data = realloc(self->data, sizeof(char) * temp_cap);
     if (temp_data == NULL) {
@@ -254,37 +255,78 @@ int string_reverse(string *self) {
 }
 
 vector *string_split_char(string *self, char c) {
-    if (self == NULL || self->data == NULL) {
-        return NULL;
-    }
+  if (self == NULL || self->data == NULL) {
+    return NULL;
+  }
 
-    vector *strvector = create_vector(sizeof(string));
-    size_t index = 0;
+  vector *strvector = create_vector(sizeof(string));
+  size_t index = 0;
 
-    for (size_t i = 0; i < self->size; i++) {
-        if (self->data[i] == c) {
-            size_t length = i - index;
-            string *splitstring = create_string();
-            if (length > 0) {
-                char splitbuffer[length + 1];
-                memcpy(splitbuffer, self->data + index, length);
-                splitbuffer[length] = '\0';
-                string_append_str(splitstring, splitbuffer);
-            }
-            vec_push(strvector, splitstring);
-            index = i + 1;
+  for (size_t i = 0; i < self->size; i++) {
+    if (self->data[i] == c) {
+      size_t length = i - index;
+      string splitstring;
+      init_string(&splitstring);
+      if (length > 0) {
+        char *splitbuffer = malloc(length + 1);
+        if (splitbuffer == NULL) {
+          return NULL;
         }
-    }
-
-    if (index < self->size) {
-        size_t length = self->size - index;
-        string *splitstring = create_string();
-        char splitbuffer[length + 1];
         memcpy(splitbuffer, self->data + index, length);
         splitbuffer[length] = '\0';
-        string_append_str(splitstring, splitbuffer);
-        vec_push(strvector, splitstring);
+        string_append_str(&splitstring, splitbuffer);
+        free(splitbuffer);
+      }
+      vec_push(strvector, &splitstring);
+      index = i + 1;
     }
+  }
 
-    return strvector;
+  if (index < self->size) {
+    size_t length = self->size - index;
+    string splitstring;
+    init_string(&splitstring);
+    char *splitbuffer = malloc(length + 1);
+    if (splitbuffer == NULL) {
+      return NULL;
+    }
+    memcpy(splitbuffer, self->data + index, length);
+    splitbuffer[length] = '\0';
+    string_append_str(&splitstring, splitbuffer);
+    free(splitbuffer);
+    vec_push(strvector, &splitstring);
+  }
+
+  return strvector;
+}
+
+int init_string(string *str) {
+  if (str == NULL) {
+    return 1;
+  }
+  str->data = malloc(sizeof(char) * INITIAL_CAP);
+  if (str->data == NULL) {
+    return 1;
+  }
+  str->capacity = INITIAL_CAP;
+  str->size = 0;
+  str->data[str->size] = '\0';
+  return 0;
+}
+
+int destroy_string(string *self) {
+  if (self == NULL) {
+    return 1;
+  }
+  free(self->data);
+  free(self);
+
+  return 0;
+}
+
+void cleanup_string(string *self) {
+  if (self != NULL && self->data != NULL) {
+    free(self->data);
+    self->data = NULL;
+  }
 }

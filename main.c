@@ -1,5 +1,7 @@
 #include "string.h"
+#include "vector.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 // int main() {
 //   string *string = create_string();
@@ -62,12 +64,20 @@
 //   free_string(&string);
 // }
 
-int main(){
-    string *string = create_string();
-    string_append_str(string, "hello,guys,this,is,loren,hahahahahhahahah");
+int main() {
+  string *stringobj = create_string();
+  string_append_str(stringobj, "hello,guys,this,is,loren,hahahahahhahahah");
 
-    vector* stringvec=string_split_char(string, ',');
+  vector *stringvec = string_split_char(stringobj, ',');
+  size_t count = vec_count(stringvec);
 
-    clear_string(string);
-    free_string(&string);
+  size_t i;
+  string *item = NULL;
+  for (i = 0; i < count; i++) {
+    item = (string *)vec_at(stringvec, i);
+    printf("%s\n",string_cstr(item));
+    cleanup_string(item);
+  }
+  free_vector(&stringvec);
+  free_string(&stringobj);
 }

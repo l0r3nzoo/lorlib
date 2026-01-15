@@ -33,6 +33,8 @@ int vec_remove_at(vector *v, size_t i);
 /// @return 0 on SUCCESS, 1 on FAILURE
 int vec_clear(vector *v);
 
+void* vec_at(vector* v,size_t i);
+
 /// Index of the item
 /// @param v Pointer to the vector
 /// @param i Pointer to the item

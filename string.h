@@ -8,6 +8,7 @@ typedef struct string string;
 string *create_string(void); // DONE
 string *string_join(char seperator, vector *strings);
 string *string_concat(vector *string);
+int init_string(string* str); // DONE
 
 const char *string_cstr(string *self); // DONE
 
@@ -44,5 +45,7 @@ bool string_endswith_char(string *self, char c);
 bool string_endswith_str(string *self, const char *s);
 
 int free_string(string **self); // DONE
+int destroy_string(string *self); // DONE
+void cleanup_string(string *self); //DONE
 
 #endif

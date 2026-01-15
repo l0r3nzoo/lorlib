@@ -48,7 +48,7 @@ int string_append_char(string *self, char c) {
   return 0;
 }
 int string_append_str(string *self, const char *s) {
-  if (self == NULL) {
+  if (self == NULL || s == NULL) {
     return 1;
   }
   size_t len = strlen(s);
@@ -122,11 +122,11 @@ int string_prepend_char(string *self, char c) {
 }
 
 int string_prepend_str(string *self, const char *s) {
-  if (self == NULL) {
+  if (self == NULL||s==NULL) {
     return 1;
   }
   size_t len = strlen(s);
-  if (self->size + 1 >= self->capacity) {
+  if (self->size + len + 1 > self->capacity) {
     size_t temp_cap = self->size + len + INITIAL_CAP;
     char *temp_data = realloc(self->data, sizeof(char) * temp_cap);
     if (temp_data == NULL) {
@@ -135,9 +135,8 @@ int string_prepend_str(string *self, const char *s) {
     self->data = temp_data;
     self->capacity = temp_cap;
   }
-  for (size_t i = self->size; i > 0; i--) {
-    self->data[i + len - 1] = self->data[i - 1];
-  }
+  memmove(self->data + len, self->data,
+          self->size + 1); // +1 for null terminator
   memcpy(self->data, s, len);
   self->size += len;
   self->data[self->size] = '\0';
@@ -160,25 +159,21 @@ int string_remove_range(string *self, size_t start, size_t count) {
 }
 
 int string_remove_from(string *self, size_t start) {
-
   if (!self || !self->data)
     return 1;
   if (start > self->size)
     return 1;
 
-  if (start <= self->size) {
-    memmove(self->data + start, self->data + self->size, 1);
-    self->size = start;
-    return 0;
-  }
-  return 1;
+  self->data[start] = '\0';
+  self->size = start;
+  return 0;
 }
 
 int string_replace_char(string *self, char oldchar, char newchar) {
   if (self == NULL || self->data == NULL) {
     return 1;
   }
-  for (int i = 0; i < self->size; i++) {
+  for (size_t i = 0; i < self->size; i++) {
     if (self->data[i] == oldchar) {
       self->data[i] = newchar;
     }
@@ -187,18 +182,37 @@ int string_replace_char(string *self, char oldchar, char newchar) {
 }
 
 int string_replace_str(string *self, const char *oldstr, const char *newstr) {
-  if (self == NULL || self->data == NULL) {
+  if (!self || !self->data || !oldstr || !newstr)
     return 1;
-  }
-  size_t oldstrlen = strlen(oldstr);
-  size_t newstrlen = strlen(newstr);
-  for (int i = 0; i <= self->size - oldstrlen; i++) {
-    if (strncmp(self->data + i, oldstr, oldstrlen) == 0) {
-      memmove(self->data + i + newstrlen, self->data + i + oldstrlen,
-              self->size - i - oldstrlen + 1);
-      memcpy(self->data + i, newstr, newstrlen);
-      i += newstrlen - 1;
-      self->size += newstrlen - oldstrlen;
+
+  size_t oldlen = strlen(oldstr);
+  size_t newlen = strlen(newstr);
+  if (oldlen == 0 || oldlen > self->size)
+    return 0;
+
+  for (size_t i = 0; i + oldlen <= self->size;) {
+    if (memcmp(self->data + i, oldstr, oldlen) == 0) {
+
+      if (newlen > oldlen) {
+        size_t needed = self->size + (newlen - oldlen) + 1;
+        if (needed > self->capacity) {
+          size_t cap = needed + INITIAL_CAP;
+          char *tmp = realloc(self->data, cap);
+          if (!tmp)
+            return 1;
+          self->data = tmp;
+          self->capacity = cap;
+        }
+      }
+
+      memmove(self->data + i + newlen, self->data + i + oldlen,
+              self->size - i - oldlen + 1);
+
+      memcpy(self->data + i, newstr, newlen);
+      self->size = self->size - oldlen + newlen;
+      i += newlen;
+    } else {
+      i++;
     }
   }
   return 0;
@@ -222,7 +236,7 @@ int string_toupper(string *self) {
   if (self == NULL || self->data == NULL) {
     return 1;
   }
-  for (int i = 0; i < self->size; i++) {
+  for (size_t i = 0; i < self->size; i++) {
     self->data[i] = toupper(self->data[i]);
   }
   return 0;
@@ -232,7 +246,7 @@ int string_tolower(string *self) {
   if (self == NULL || self->data == NULL) {
     return 1;
   }
-  for (int i = 0; i < self->size; i++) {
+  for (size_t i = 0; i < self->size; i++) {
     self->data[i] = tolower(self->data[i]);
   }
   return 0;
@@ -241,6 +255,9 @@ int string_tolower(string *self) {
 int string_reverse(string *self) {
   if (self == NULL || self->data == NULL) {
     return 1;
+  }
+  if (self->size == 0) {
+    return 0;
   }
   size_t j = self->size - 1;
   size_t i = 0;
@@ -342,12 +359,7 @@ void free_string_vector(vector **stringvec) {
   free_vector(stringvec);
 }
 
-size_t string_length(string *self) {
-  if (self == NULL) {
-    return -1;
-  }
-  return self->size;
-}
+size_t string_length(string *self) { return self ? self->size : 0; }
 
 int string_indexof_char(string *self, char c) {
   if (self == NULL) {
@@ -362,13 +374,12 @@ int string_indexof_char(string *self, char c) {
 }
 
 int string_lastindexof_char(string *self, char c) {
-  if (self == NULL) {
+  if (!self || self->size == 0)
     return -1;
-  }
-  for (size_t i = self->size - 1; i >= 0; i--) {
-    if (self->data[i] == c) {
-      return i;
-    }
+
+  for (size_t i = self->size; i-- > 0;) {
+    if (self->data[i] == c)
+      return (int)i;
   }
   return -1;
 }
@@ -393,7 +404,7 @@ bool string_contains_char(string *self, char c) {
 }
 
 bool string_startswith_char(string *self, char c) {
-  if (self == NULL) {
+  if (self == NULL || self->size == 0) {
     return false;
   }
   if (self->data[0] == c) {
@@ -403,7 +414,7 @@ bool string_startswith_char(string *self, char c) {
 }
 
 bool string_endswith_char(string *self, char c) {
-  if (self == NULL) {
+  if (self == NULL || self->size == 0) {
     return false;
   }
   if (self->data[self->size - 1] == c) {
@@ -443,4 +454,110 @@ string *string_concat(vector *strings) {
     string_append_str(str, string_cstr(item));
   }
   return str;
+}
+
+vector *string_split_str(string *self, const char *s) {
+  if (!self || !self->data || !s)
+    return NULL;
+
+  size_t len = strlen(s);
+  if (len == 0 || len > self->size)
+    return NULL;
+
+  vector *v = create_vector(sizeof(string));
+  size_t start = 0;
+
+  for (size_t i = 0; i <= self->size - len;) {
+    if (memcmp(self->data + i, s, len) == 0) {
+      size_t part_len = i - start;
+
+      string part;
+      init_string(&part);
+      if (part_len > 0) {
+        char *buf = malloc(part_len + 1);
+        memcpy(buf, self->data + start, part_len);
+        buf[part_len] = '\0';
+        string_append_str(&part, buf);
+        free(buf);
+      }
+      vec_push(v, &part);
+
+      i += len;
+      start = i;
+    } else {
+      i++;
+    }
+  }
+
+  if (start < self->size) {
+    size_t part_len = self->size - start;
+    string part;
+    init_string(&part);
+
+    char *buf = malloc(part_len + 1);
+    memcpy(buf, self->data + start, part_len);
+    buf[part_len] = '\0';
+    string_append_str(&part, buf);
+    free(buf);
+
+    vec_push(v, &part);
+  }
+
+  return v;
+}
+
+int string_indexof_str(string *self, const char *s) {
+  if (!self || !self->data || !s)
+    return -1;
+
+  size_t len = strlen(s);
+  if (len == 0 || len > self->size)
+    return -1;
+
+  for (size_t i = 0; i <= self->size - len; i++)
+    if (memcmp(self->data + i, s, len) == 0)
+      return (int)i;
+
+  return -1;
+}
+
+int string_lastindexof_str(string *self, const char *s) {
+  if (!self || !self->data || !s)
+    return -1;
+
+  size_t len = strlen(s);
+  if (len == 0 || len > self->size)
+    return -1;
+
+  for (size_t i = self->size - len + 1; i-- > 0;)
+    if (memcmp(self->data + i, s, len) == 0)
+      return (int)i;
+
+  return -1;
+}
+
+bool string_contains_str(string *self, const char *s) {
+  return string_indexof_str(self, s) != -1;
+}
+
+bool string_startswith_str(string *self, const char *s) {
+  if (!self || !self->data || !s)
+    return false;
+
+  size_t len = strlen(s);
+  if (len == 0 || len > self->size)
+    return false;
+
+  return memcmp(self->data, s, len) == 0;
+}
+
+bool string_endswith_str(string *self, const char *s) {
+  if (!self || !self->data || !s)
+    return false;
+
+  size_t len = strlen(s);
+  if (len == 0 || len > self->size)
+    return false;
+
+  return memcmp(self->data + self->size - len, s, len) == 0;
 }

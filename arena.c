@@ -63,12 +63,19 @@ void *arena_alloc(arena *a, size_t bytes) {
   return data;
 }
 
+
+static inline void memzero(void *p, size_t n) {
+  volatile unsigned char *vp = (volatile unsigned char *)p;
+  while (n--)
+    *vp++ = 0;
+}
+
 void *arena_alloc_zero(arena *a, size_t bytes) {
   void *data = arena_alloc(a, bytes);
   if (data == NULL) {
     return NULL;
   }
-  memset(data, 0, bytes);
+  memzero(data, bytes);
   return data;
 }
 
